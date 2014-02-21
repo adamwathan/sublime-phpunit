@@ -7,8 +7,6 @@ import sublime
 import sublime_plugin
 
 class RunPhpunitTestCommand(sublime_plugin.WindowCommand):
-    def __init__(self, *args, **kwargs):
-        super(RunPhpunitTestCommand, self).__init__(*args, **kwargs)
 
     def run(self, *args, **kwargs):
         file_name = self.window.active_view().file_name()
@@ -37,8 +35,6 @@ class RunPhpunitTestCommand(sublime_plugin.WindowCommand):
 
 
 class FindMatchingTestCommand(sublime_plugin.WindowCommand):
-    def __init__(self, *args, **kwargs):
-        super(FindMatchingTestCommand, self).__init__(*args, **kwargs)
 
     def path_leaf(self, path):
         head, tail = ntpath.split(path)
@@ -48,16 +44,25 @@ class FindMatchingTestCommand(sublime_plugin.WindowCommand):
         file_name = self.window.active_view().file_name()
         file_name = self.path_leaf(file_name)
         file_name = file_name[0:file_name.find('.')]
+        tab_target = 0
 
         if 'Test' not in file_name:
             file_name = file_name + 'Test'
         else:
             # Strip 'Test' and add '.' to force matching the non-test file
             file_name = file_name[0:file_name.find('Test')] + '.'
+            tab_target = 1
 
+        # Big dirty macro-ish hack. Eventually I should just open the file in some sort of
+        # logical way.
+        self.window.run_command("set_layout", {"cells": [[0, 0, 1, 1], [1, 0, 2, 1]], "cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0]})
+        self.window.run_command("focus_group", {"group": tab_target})
         self.window.run_command("show_overlay", {"overlay": "goto", "text": file_name, "show_files": "true"})
         self.window.run_command("move", {"by": "lines", "forward": False})
 
         # This is a dirty hack to get it to switch files... Can't simulate 'Enter'
         # but triggering the overlay again to close it seems to have the same effect.
         self.window.run_command("show_overlay", {"overlay": "goto", "show_files": "true"})
+        self.window.run_command("focus_group", {"group": 0})
+        self.window.run_command("focus_group", {"group": tab_target})
+
