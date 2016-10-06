@@ -2,10 +2,12 @@
 
 Super quick and dirty Sublime Text command for running the currently open test file. Scans up the directory tree to find the closest phpunit.xml file and runs phpunit from there. If it can't find one, it just runs phpunit from `/`. Good enough for me.
 
-Just stick `phpunit.py` and `run_command.applescript` in your `Packages/User` directory and you're good to go.
+Just stick `git clone` this repo into your `~/Library/Application Support/Sublime Text 3/Packages` directory and you're good to go.
 
-Map `run_phpunit_test` in your key bindings file to run:
+You can find the commands in the command palette under "Sublime PHPUnit", or map any of these commands to whatever shortcuts you want:
 
 ```
-    { "keys": ["alt+t"], "command": "run_phpunit_test"}
+run_phpunit_test
+run_phpunit_tests_in_dir
+run_single_phpunit_test
 ```
