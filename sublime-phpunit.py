@@ -40,7 +40,8 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
 
     def run_in_terminal(self, command):
         osascript_command = 'osascript '
-        osascript_command += '"' + sublime.packages_path() + '/User/run_command.applescript"'
+        osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/run_command.applescript"'
+        print(osascript_command)
         osascript_command += ' "' + command + '"'
         osascript_command += ' "PHPUnit Tests"'
         os.system(osascript_command)
