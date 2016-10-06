@@ -6,16 +6,27 @@ import subprocess
 import sublime
 import sublime_plugin
 
-class RunPhpunitTestCommand(sublime_plugin.WindowCommand):
-
-    def run(self, *args, **kwargs):
+class PhpunitTestCommand(sublime_plugin.WindowCommand):
+    def get_paths(self):
         file_name = self.window.active_view().file_name()
         phpunit_config_path = self.find_phpunit_config(file_name)
 
         file_name = file_name.replace(' ', '\ ')
         phpunit_config_path = phpunit_config_path.replace(' ', '\ ')
 
-        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name)
+        active_view = self.window.active_view()
+
+        return file_name, phpunit_config_path, active_view
+
+    def get_current_function(self, view):
+        sel = view.sel()[0]
+        function_regions = view.find_by_selector('entity.name.function')
+        cf = None
+        for r in reversed(function_regions):
+            if r.a < sel.a:
+                cf = view.substr(r)
+                break
+        return cf
 
     def find_phpunit_config(self, file_name):
         phpunit_config_path = file_name
@@ -33,6 +44,22 @@ class RunPhpunitTestCommand(sublime_plugin.WindowCommand):
         os.system(osascript_command)
         # subprocess.Popen("""osascript -e 'tell application "Sublime Text" to activate' """, shell=True)
 
+class RunPhpunitTestCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view = self.get_paths()
+
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name)
+
+
+class RunSinglePhpunitTestCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view = self.get_paths()
+
+        current_function = self.get_current_function(active_view)
+
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + ' --filter ' + current_function)
 
 class FindMatchingTestCommand(sublime_plugin.WindowCommand):
 
