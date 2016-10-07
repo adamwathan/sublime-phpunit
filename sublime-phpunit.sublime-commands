@@ -1,6 +1,6 @@
 [
     { "caption": "Sublime PHPUnit: Run This File", "command": "run_phpunit_test" },
     { "caption": "Sublime PHPUnit: Run This Directory", "command": "run_phpunit_tests_in_dir" },
-    { "caption": "Sublime PHPUnit: Run This Test Method", "command": "run_single_phpunit_test" }
+    { "caption": "Sublime PHPUnit: Run This Test Method", "command": "run_single_phpunit_test" },
     { "caption": "Sublime PHPUnit: Run All Tests", "command": "run_all_phpunit_tests" }
 ]
