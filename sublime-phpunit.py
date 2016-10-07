@@ -44,13 +44,13 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
 
         osascript_command = 'osascript '
 
-        if terminal_setting == 'Terminal':
+        if terminal_setting == 'iTerm':
+            osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/open_iterm.applescript"'
+            osascript_command += ' "' + command + '"'
+        else:
             osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/run_command.applescript"'
             osascript_command += ' "' + command + '"'
             osascript_command += ' "PHPUnit Tests"'
-        else:
-            osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/open_iterm.applescript"'
-            osascript_command += ' "' + command + '"'
 
         os.system(osascript_command)
 
