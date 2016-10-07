@@ -9,7 +9,9 @@ on runTest(_command)
 		end if
 
 		tell current session of theWindow
-			write text ";clear;" & _command
+			delay 0.1
+			tell application "System Events" to keystroke "k" using command down
+			write text _command
 		end tell
 	end tell
 end runTest
