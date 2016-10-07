@@ -11,3 +11,5 @@ run_phpunit_test
 run_phpunit_tests_in_dir
 run_single_phpunit_test
 ```
+
+By default, this package uses macOS's built-in Terminal.app. If you want to use iTerm, you can do so by setting `"phpunit-sublime-terminal": "iTerm"` in your settings.
