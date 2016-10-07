@@ -39,13 +39,20 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
         return phpunit_config_path
 
     def run_in_terminal(self, command):
+        settings = sublime.load_settings("Preferences.sublime-settings")
+        terminal_setting = settings.get('phpunit-sublime-terminal', 'Terminal')
+
         osascript_command = 'osascript '
-        osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/run_command.applescript"'
-        print(osascript_command)
-        osascript_command += ' "' + command + '"'
-        osascript_command += ' "PHPUnit Tests"'
+
+        if terminal_setting == 'Terminal':
+            osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/run_command.applescript"'
+            osascript_command += ' "' + command + '"'
+            osascript_command += ' "PHPUnit Tests"'
+        else:
+            osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/open_iterm.applescript"'
+            osascript_command += ' "' + command + '"'
+
         os.system(osascript_command)
-        # subprocess.Popen("""osascript -e 'tell application "Sublime Text" to activate' """, shell=True)
 
 class RunPhpunitTestCommand(PhpunitTestCommand):
 
