@@ -10,4 +10,5 @@ You can find the commands in the command palette under "Sublime PHPUnit", or map
 run_phpunit_test
 run_phpunit_tests_in_dir
 run_single_phpunit_test
+run_all_phpunit_tests
 ```

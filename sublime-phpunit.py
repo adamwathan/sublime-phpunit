@@ -54,6 +54,13 @@ class RunPhpunitTestCommand(PhpunitTestCommand):
 
         self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name)
 
+class RunAllPhpunitTestsCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit')
+
 
 class RunSinglePhpunitTestCommand(PhpunitTestCommand):
 
