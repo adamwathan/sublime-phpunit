@@ -7,6 +7,17 @@ import sublime
 import sublime_plugin
 
 class PhpunitTestCommand(sublime_plugin.WindowCommand):
+    def get_setting(self, key, default=None):
+        settings = sublime.load_settings("Preferences.sublime-settings")
+
+        return settings.get(key, default)
+
+    def get_cmd_connector(self):
+        if self.get_setting('phpunit-sublime-shell', 'bash') == 'fish':
+            return '; and '
+        else:
+            return ' && '
+
     def get_paths(self):
         file_name = self.window.active_view().file_name()
         phpunit_config_path = self.find_phpunit_config(file_name)
@@ -39,12 +50,9 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
         return phpunit_config_path
 
     def run_in_terminal(self, command):
-        settings = sublime.load_settings("Preferences.sublime-settings")
-        terminal_setting = settings.get('phpunit-sublime-terminal', 'Terminal')
-
         osascript_command = 'osascript '
 
-        if terminal_setting == 'iTerm':
+        if self.get_setting('phpunit-sublime-terminal', 'Term') == 'iTerm':
             osascript_command += '"' + os.path.dirname(os.path.realpath(__file__)) + '/open_iterm.applescript"'
             osascript_command += ' "' + command + '"'
         else:
@@ -58,32 +66,36 @@ class RunPhpunitTestCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
         file_name, phpunit_config_path, active_view, directory = self.get_paths()
+        then = self.get_cmd_connector()
 
-        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name)
+        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit ' + file_name)
 
 class RunAllPhpunitTestsCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
         file_name, phpunit_config_path, active_view, directory = self.get_paths()
+        then = self.get_cmd_connector()
 
-        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit')
+        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit')
 
 
 class RunSinglePhpunitTestCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
         file_name, phpunit_config_path, active_view, directory = self.get_paths()
+        then = self.get_cmd_connector()
 
         current_function = self.get_current_function(active_view)
 
-        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + ' --filter ' + current_function)
+        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit ' + file_name + ' --filter ' + current_function)
 
 class RunPhpunitTestsInDirCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
         file_name, phpunit_config_path, active_view, directory = self.get_paths()
+        then = self.get_cmd_connector()
 
-        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + directory)
+        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit ' + directory)
 
 class FindMatchingTestCommand(sublime_plugin.WindowCommand):
 
@@ -116,4 +128,3 @@ class FindMatchingTestCommand(sublime_plugin.WindowCommand):
         self.window.run_command("show_overlay", {"overlay": "goto", "show_files": "true"})
         self.window.run_command("focus_group", {"group": 0})
         self.window.run_command("focus_group", {"group": tab_target})
-

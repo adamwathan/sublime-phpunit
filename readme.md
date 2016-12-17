@@ -14,3 +14,5 @@ run_all_phpunit_tests
 ```
 
 By default, this package uses macOS's built-in Terminal.app. If you want to use iTerm, you can do so by setting `"phpunit-sublime-terminal": "iTerm"` in your settings.
+
+Also, if you happen to use [fish shell](https://fishshell.com/), set `"php-sublime-shell": "fish"` in the settings. This will instruct Sublime PHPUnit to properly connect the commands using `; and` instead of the default `&&`.
