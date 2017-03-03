@@ -2,5 +2,9 @@
     { "caption": "Sublime PHPUnit: Run This File", "command": "run_phpunit_test" },
     { "caption": "Sublime PHPUnit: Run This Directory", "command": "run_phpunit_tests_in_dir" },
     { "caption": "Sublime PHPUnit: Run This Test Method", "command": "run_single_phpunit_test" },
-    { "caption": "Sublime PHPUnit: Run All Tests", "command": "run_all_phpunit_tests" }
+    { "caption": "Sublime PHPUnit: Run All Tests", "command": "run_all_phpunit_tests" },
+    { "caption": "Sublime PHPUnit: Run Dusk In This File", "command": "run_dusk_test" },
+    { "caption": "Sublime PHPUnit: Run Dusk In This Directory", "command": "run_dusk_tests_in_dir" },
+    { "caption": "Sublime PHPUnit: Run Dusk On This Method", "command": "run_single_dusk_test" },
+    { "caption": "Sublime PHPUnit: Run All Dusk Tests", "command": "run_all_dusk_tests" },
 ]
