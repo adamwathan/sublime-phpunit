@@ -10,7 +10,9 @@ on runTest(_command)
 
 		tell current session of theWindow
 			delay 0.1
-			tell application "System Events" to keystroke "k" using command down
+			tell application "System Events" to keystroke "k" using {command down}
+			tell application "System Events" to keystroke "U" using {control down}
+
 			write text _command
 		end tell
 	end tell
