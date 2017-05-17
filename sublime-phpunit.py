@@ -6,12 +6,10 @@ import subprocess
 import sublime
 import sublime_plugin
 
-lastTestState = {}
-lastTestState['config_path'] = False
-lastTestState['file_name'] = False
-lastTestState['function'] = False
-
 class PhpunitTestCommand(sublime_plugin.WindowCommand):
+
+    lastTestCommand = False
+
     def get_paths(self):
         file_name = self.window.active_view().file_name()
         phpunit_config_path = self.find_phpunit_config(file_name)
@@ -77,6 +75,7 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
             osascript_command += ' "' + command + '"'
             osascript_command += ' "PHPUnit Tests"'
 
+        self.lastTestCommand = command
         os.system(osascript_command)
 
 class RunPhpunitTestCommand(PhpunitTestCommand):
@@ -99,27 +98,21 @@ class RunSinglePhpunitTestCommand(PhpunitTestCommand):
     def run(self, *args, **kwargs):
         file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
 
-        if 'Test' not in file_name:
-            if lastTestState['config_path'] and lastTestState['file_name'] and lastTestState['function']:
-                self.run_in_terminal('cd ' + lastTestState['config_path'] + ' && phpunit ' + lastTestState['file_name'] + ' --filter ' + lastTestState['function'])
-        else:
-            current_function = self.get_current_function(active_view)
+        current_function = self.get_current_function(active_view)
 
-            lastTestState['config_path'] = phpunit_config_path
-            lastTestState['file_name'] = file_name
-            lastTestState['function'] = current_function
-
-            self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + " --filter '/::" + current_function + "$/'")
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + " --filter '/::" + current_function + "$/'")
 
 class RunLastPhpunitTestCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
-        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+        file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
 
         current_function = self.get_current_function(active_view)
 
-        if lastTestState['config_path'] and lastTestState['file_name'] and lastTestState['function']:
-            self.run_in_terminal('cd ' + lastTestState['config_path'] + ' && phpunit ' + lastTestState['file_name'] + ' --filter ' + lastTestState['function'])
+        if 'Test' in file_name:
+            self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + " --filter '/::" + current_function + "$/'")
+        elif self.lastTestCommand:
+            self.run_in_terminal(self.lastTestCommand)
 
 class RunPhpunitTestsInDirCommand(PhpunitTestCommand):
 
