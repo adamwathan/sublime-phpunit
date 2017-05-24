@@ -96,7 +96,7 @@ class RunSinglePhpunitTestCommand(PhpunitTestCommand):
 
         current_function = self.get_current_function(active_view)
 
-        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + " --filter '/::" + current_function + "$/'")
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && ' + phpunit_bin + ' ' + file_name + " --filter '/::" + current_function + "$/'")
 
 class RunPhpunitTestsInDirCommand(PhpunitTestCommand):
 
