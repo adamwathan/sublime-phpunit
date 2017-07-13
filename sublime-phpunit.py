@@ -50,7 +50,7 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
             if False == found:
                 binpath = os.path.realpath(directory + "/" + path)
 
-                if os.path.isfile(binpath):
+                if os.path.isfile(binpath.replace("\\", "")):
                     found = True
 
         if False == found:
