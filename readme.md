@@ -3,7 +3,7 @@
 Convenient Sublime Text commands for running your PHPUnit tests. Scans up the directory tree to find the closest phpunit.xml file and runs phpunit from there. If it can't find one, it just runs phpunit from `/`.
 
 ```bash
-git clone https://github.com/adamwathan/sublime-phpunit ~/Library/Applications\ Support/Sublime\ Text\ 3/Packages/sublime-phpunit
+git clone https://github.com/adamwathan/sublime-phpunit ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/sublime-phpunit
 ```
 
 You can find the commands in the command palette under "Sublime PHPUnit", or map any of these commands to whatever shortcuts you want:
