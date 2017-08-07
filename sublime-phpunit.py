@@ -107,10 +107,8 @@ class RunLastPhpunitTestCommand(PhpunitTestCommand):
     def run(self, *args, **kwargs):
         file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
 
-        current_function = self.get_current_function(active_view)
-
         if 'Test' in file_name:
-            self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + " --filter '/::" + current_function + "$/'")
+            RunSinglePhpunitTestCommand.run(self, args, kwargs);
         elif self.lastTestCommand:
             self.run_in_terminal(self.lastTestCommand)
 
