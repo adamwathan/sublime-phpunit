@@ -31,6 +31,7 @@ Here are some example keybindings:
 [
     { "keys": ["alt+t"], "command": "run_phpunit_test"},
     { "keys": ["super+alt+t"], "command": "run_single_phpunit_test"},
+    { "keys": ["super+alt+l+t"], "command": "run_last_phpunit_test"},
     { "keys": ["super+shift+t"], "command": "run_phpunit_tests_in_dir"},
     { "keys": ["super+shift+ctrl+t"], "command": "run_all_phpunit_tests"},
 ]
