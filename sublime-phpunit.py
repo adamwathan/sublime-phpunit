@@ -7,6 +7,9 @@ import sublime
 import sublime_plugin
 
 class PhpunitTestCommand(sublime_plugin.WindowCommand):
+
+    lastTestCommand = False
+
     def get_paths(self):
         file_name = self.window.active_view().file_name()
         phpunit_config_path = self.find_phpunit_config(file_name)
@@ -72,6 +75,7 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
             osascript_command += ' "' + command + '"'
             osascript_command += ' "PHPUnit Tests"'
 
+        self.lastTestCommand = command
         os.system(osascript_command)
 
 class RunPhpunitTestCommand(PhpunitTestCommand):
@@ -97,6 +101,16 @@ class RunSinglePhpunitTestCommand(PhpunitTestCommand):
         current_function = self.get_current_function(active_view)
 
         self.run_in_terminal('cd ' + phpunit_config_path + ' && ' + phpunit_bin + ' ' + file_name + " --filter '/::" + current_function + "$/'")
+
+class RunLastPhpunitTestCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
+
+        if 'Test' in file_name:
+            RunSinglePhpunitTestCommand.run(self, args, kwargs);
+        elif self.lastTestCommand:
+            self.run_in_terminal(self.lastTestCommand)
 
 class RunPhpunitTestsInDirCommand(PhpunitTestCommand):
 
