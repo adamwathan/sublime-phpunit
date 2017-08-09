@@ -39,7 +39,7 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
         found = False
         while found == False:
             phpunit_config_path = os.path.abspath(os.path.join(phpunit_config_path, os.pardir))
-            found = os.path.isfile(phpunit_config_path + '/phpunit.xml') or phpunit_config_path == '/'
+            found = os.path.isfile(phpunit_config_path + '/phpunit.xml') or os.path.isfile(phpunit_config_path + '/phpunit.xml.dist') or phpunit_config_path == '/'
         return phpunit_config_path
 
     def find_phpunit_bin(self, directory):
@@ -53,7 +53,7 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
             if False == found:
                 binpath = os.path.realpath(directory + "/" + path)
 
-                if os.path.isfile(binpath):
+                if os.path.isfile(binpath.replace("\\", "")):
                     found = True
 
         if False == found:
@@ -100,7 +100,7 @@ class RunSinglePhpunitTestCommand(PhpunitTestCommand):
 
         current_function = self.get_current_function(active_view)
 
-        self.run_in_terminal('cd ' + phpunit_config_path + ' && phpunit ' + file_name + " --filter '/::" + current_function + "$/'")
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && ' + phpunit_bin + ' ' + file_name + " --filter '/::" + current_function + "$/'")
 
 class RunLastPhpunitTestCommand(PhpunitTestCommand):
 
