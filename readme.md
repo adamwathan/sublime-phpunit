@@ -2,11 +2,6 @@
 
 Convenient Sublime Text commands for running your PHPUnit tests. Scans up the directory tree to find the closest phpunit.xml file and runs phpunit from there. If it can't find one, it just runs phpunit from `/`.
 
-It is also possible to rerun your last test from any file within your project. 
-The command `run_last_phpunit_test` will also act like the `run_single_phpunit_test` when no last test was found.
-
-Just `git clone` this repo into your `~/Library/Application Support/Sublime Text 3/Packages` directory and you're good to go.
-
 ## Installation
 
 
