@@ -119,6 +119,30 @@ class RunPhpunitTestsInDirCommand(PhpunitTestCommand):
 
         self.run_in_terminal('cd ' + phpunit_config_path + ' && ' + phpunit_bin + ' ' + directory)
 
+class RunSingleDuskTestCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+
+        current_function = self.get_current_function(active_view)
+
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && php artisan dusk ' +file_name + ' --filter ' + current_function)
+
+class RunAllDuskTestsCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && php artisan dusk')
+
+class RunDuskTestsInDirCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+
+        self.run_in_terminal('cd ' + phpunit_config_path + ' && php artisan dusk ' + directory)
+
+
 class FindMatchingTestCommand(sublime_plugin.WindowCommand):
 
     def path_leaf(self, path):
