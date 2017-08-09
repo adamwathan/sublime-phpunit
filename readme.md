@@ -26,7 +26,7 @@ Here are some example keybindings:
 
 ## Using iTerm2 instead of Terminal.app
 
-By default, this package uses macOS's built-in Terminal.app. If you want to use iTerm2, you can do so by setting `"phpunit-sublime-terminal": "iTerm"` in your settings.
+By default, this package uses macOS's built-in Terminal.app. If you want to use iTerm2, you can do so changing the terminal in your settings:
 
 ```
 {
