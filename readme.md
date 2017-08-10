@@ -8,7 +8,7 @@ Convenient Sublime Text commands for running your PHPUnit tests. Scans up the di
 Installation is as simple as cloning the repository into your Sublime Text install's `Packages` folder:
 
 ```bash
-git clone https://github.com/adamwathan/sublime-phpunit /Library/Application\ Support/Sublime\ Text\ 3/Packages/sublime-phpunit
+git clone https://github.com/adamwathan/sublime-phpunit ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/sublime-phpunit
 ```
 
 ## Available Commands & Example Keybindings
