@@ -7,13 +7,14 @@ import sublime
 import sublime_plugin
 
 class PhpunitTestCommand(sublime_plugin.WindowCommand):
-    def get_setting(self, key, default=None):
-        settings = sublime.load_settings("Preferences.sublime-settings")
 
-        return settings.get(key, default)
+    lastTestCommand = False
+
+    def get_setting(self, key, default=None):
+        return sublime.load_settings("Preferences.sublime-settings").get(key, default)
 
     def get_cmd_connector(self):
-        if self.get_setting('phpunit-sublime-shell', 'bash') == 'fish':
+        if 'fish' == self.get_setting('phpunit-sublime-shell', 'bash'):
             return '; and '
         else:
             return ' && '
@@ -26,10 +27,11 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
 
         file_name = file_name.replace(' ', '\ ')
         phpunit_config_path = phpunit_config_path.replace(' ', '\ ')
+        phpunit_bin = self.find_phpunit_bin(phpunit_config_path)
 
         active_view = self.window.active_view()
 
-        return file_name, phpunit_config_path, active_view, directory
+        return file_name, phpunit_config_path, phpunit_bin, active_view, directory
 
     def get_current_function(self, view):
         sel = view.sel()[0]
@@ -46,8 +48,27 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
         found = False
         while found == False:
             phpunit_config_path = os.path.abspath(os.path.join(phpunit_config_path, os.pardir))
-            found = os.path.isfile(phpunit_config_path + '/phpunit.xml') or phpunit_config_path == '/'
+            found = os.path.isfile(phpunit_config_path + '/phpunit.xml') or os.path.isfile(phpunit_config_path + '/phpunit.xml.dist') or phpunit_config_path == '/'
         return phpunit_config_path
+
+    def find_phpunit_bin(self, directory):
+        search_paths = [
+            'vendor/bin/phpunit',
+            'vendor/bin/phpunit/phpunit/phpunit',
+        ]
+
+        found = False;
+        for path in search_paths:
+            if False == found:
+                binpath = os.path.realpath(directory + "/" + path)
+
+                if os.path.isfile(binpath.replace("\\", "")):
+                    found = True
+
+        if False == found:
+            binpath = 'phpunit'
+
+        return binpath
 
     def run_in_terminal(self, command):
         osascript_command = 'osascript '
@@ -60,42 +81,73 @@ class PhpunitTestCommand(sublime_plugin.WindowCommand):
             osascript_command += ' "' + command + '"'
             osascript_command += ' "PHPUnit Tests"'
 
+        self.lastTestCommand = command
         os.system(osascript_command)
 
 class RunPhpunitTestCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
-        file_name, phpunit_config_path, active_view, directory = self.get_paths()
-        then = self.get_cmd_connector()
+        file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
 
-        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit ' + file_name)
+        self.run_in_terminal('cd ' + phpunit_config_path + self.get_cmd_connector() + phpunit_bin + ' ' + file_name)
 
 class RunAllPhpunitTestsCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
-        file_name, phpunit_config_path, active_view, directory = self.get_paths()
-        then = self.get_cmd_connector()
+        file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
 
-        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit')
+        self.run_in_terminal('cd ' + phpunit_config_path + self.get_cmd_connector() + phpunit_bin)
 
 
 class RunSinglePhpunitTestCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
-        file_name, phpunit_config_path, active_view, directory = self.get_paths()
-        then = self.get_cmd_connector()
+        file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
 
         current_function = self.get_current_function(active_view)
 
-        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit ' + file_name + " --filter '/::" + current_function + "$/'")
+        self.run_in_terminal('cd ' + phpunit_config_path + self.get_cmd_connector() + phpunit_bin + ' ' + file_name + " --filter '/::" + current_function + "$/'")
+
+class RunLastPhpunitTestCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
+
+        if 'Test' in file_name:
+            RunSinglePhpunitTestCommand.run(self, args, kwargs);
+        elif self.lastTestCommand:
+            self.run_in_terminal(self.lastTestCommand)
 
 class RunPhpunitTestsInDirCommand(PhpunitTestCommand):
 
     def run(self, *args, **kwargs):
-        file_name, phpunit_config_path, active_view, directory = self.get_paths()
-        then = self.get_cmd_connector()
+        file_name, phpunit_config_path, phpunit_bin, active_view, directory = self.get_paths()
 
-        self.run_in_terminal('cd ' + phpunit_config_path + then + 'phpunit ' + directory)
+        self.run_in_terminal('cd ' + phpunit_config_path + self.get_cmd_connector() + phpunit_bin + ' ' + directory)
+
+class RunSingleDuskTestCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+
+        current_function = self.get_current_function(active_view)
+
+        self.run_in_terminal('cd ' + phpunit_config_path + self.get_cmd_connector() + 'php artisan dusk ' + file_name + ' --filter ' + current_function)
+
+class RunAllDuskTestsCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+
+        self.run_in_terminal('cd ' + phpunit_config_path + self.get_cmd_connector() + 'php artisan dusk')
+
+class RunDuskTestsInDirCommand(PhpunitTestCommand):
+
+    def run(self, *args, **kwargs):
+        file_name, phpunit_config_path, active_view, directory = self.get_paths()
+
+        self.run_in_terminal('cd ' + phpunit_config_path + self.get_cmd_connector() + 'php artisan dusk ' + directory)
+
 
 class FindMatchingTestCommand(sublime_plugin.WindowCommand):
 
@@ -128,3 +180,4 @@ class FindMatchingTestCommand(sublime_plugin.WindowCommand):
         self.window.run_command("show_overlay", {"overlay": "goto", "show_files": "true"})
         self.window.run_command("focus_group", {"group": 0})
         self.window.run_command("focus_group", {"group": tab_target})
+
