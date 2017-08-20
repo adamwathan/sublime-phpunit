@@ -47,3 +47,15 @@ By default, this package uses macOS's built-in Terminal.app. If you want to use 
     "phpunit-sublime-terminal": "iTerm",
 }
 ```
+
+## Using fish shell
+
+If you use [fish shell](https://fishshell.com/), specify this in your settings: 
+
+```
+{
+    "php-sublime-shell": "fish"
+}
+``` 
+
+This will instruct Sublime PHPUnit to connect the commands using fish's `; and` instead of bash's `&&`.
