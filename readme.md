@@ -54,7 +54,7 @@ If you use [fish shell](https://fishshell.com/), specify this in your settings:
 
 ```
 {
-    "php-sublime-shell": "fish"
+    "phpunit-sublime-shell": "fish"
 }
 ``` 
 
